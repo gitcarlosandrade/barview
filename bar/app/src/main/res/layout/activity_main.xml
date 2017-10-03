@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="ca.com.br.bar.MainActivity">
+
+    <ca.com.br.bar.MonthBarView
+        android:id="@+id/bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:bar_color="@color/positive_blue"
+        app:over_bar_color="@color/negative_red"
+        android:layout_marginBottom="8dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Valor máximo"/>
+
+    <EditText
+        android:id="@+id/max_value"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="valor máximo"
+        android:text="5000"
+        android:inputType="numberDecimal"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Valor"/>
+
+    <EditText
+        android:id="@+id/value"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="2500"
+        android:hint="valor"
+        android:inputType="numberDecimal"/>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Valor estimado"/>
+
+    <EditText
+        android:id="@+id/estimated"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="5000"
+        android:hint="valor estimado"
+        android:inputType="numberDecimal"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Valor acima"/>
+
+    <EditText
+        android:id="@+id/over"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="1000"
+        android:hint="valor acima"
+        android:inputType="numberDecimal"/>
+
+    <CheckBox
+        android:id="@+id/show_estimated"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Mostrar estimado"/>
+
+    <Button
+        android:id="@+id/btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="calcular"/>
+
+</LinearLayout>

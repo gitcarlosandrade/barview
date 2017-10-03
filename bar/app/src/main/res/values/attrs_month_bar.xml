@@ -1,0 +1,6 @@
+<resources>
+    <declare-styleable name="MonthBarView">
+        <attr name="bar_color" format="color"/>
+        <attr name="over_bar_color" format="color"/>
+    </declare-styleable>
+</resources>
