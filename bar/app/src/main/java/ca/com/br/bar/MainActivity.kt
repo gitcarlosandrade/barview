@@ -23,5 +23,7 @@ class MainActivity : AppCompatActivity() {
         val s = show_estimated.isChecked
         val c = this.window.decorView.findViewById<View>(android.R.id.content).rootView
         bar.bind(value = v, estimatedValue = e, over = o, maxValue = m, parentWidth = c.width, showEstimated = s)
+        bar.invalidate()
+        bar.requestLayout()
     }
 }

@@ -65,8 +65,14 @@ class MonthBarView : RelativeLayout {
              parentWidth: Int,
              showEstimated: Boolean) {
 
-        val barSize = getBarSize(maxValue, value, parentWidth)
-        valueTxt.text = value.toString()
+        val currentBarValue = if (showEstimated) {
+            Math.max(Math.abs(estimatedValue), Math.abs(value) + Math.abs(over))
+        } else {
+            Math.abs(value) + Math.abs(over)
+        }
+
+        val barSize = getBarSize(maxValue, currentBarValue, parentWidth, valueTxt)
+        valueTxt.text = currentBarValue.toString()
 
         //configura contorno (valor estimado)
         if (showEstimated) {
@@ -75,13 +81,19 @@ class MonthBarView : RelativeLayout {
             //esse espaço é usado para mostrar o estimado também
             estimated_bar.layoutParams.width = barSize
             //define o tamanho da barra de gasto atual
-            actual_bar.layoutParams.width = barSize / 2
+//            actual_bar.layoutParams.actualWidth = barSize / 2
         }
         else {
             estimatedBar.setStroke(0, barColor)
-            actual_bar.layoutParams.width = barSize
             estimated_bar.layoutParams.width = barSize
         }
+
+        val actualWidth = getWidthForValue(
+                value = value,
+                maxValue = maxValue,
+                width = barSize
+        )
+        actual_bar.layoutParams.width = actualWidth
 
         //define as cores das barras
         actualBarSolid.setColor(barColor)
@@ -91,7 +103,14 @@ class MonthBarView : RelativeLayout {
 
         if (over > 0.0) {
             //define o tamanho do excedido
+            over_bar.layoutParams.width = getWidthForValue(
+                    value = over,
+                    maxValue = maxValue,
+                    width = barSize
+            )
+
             setOverBar(barSize, showEstimated)
+
         } else {
 
             //some com a barra de excedido
@@ -106,10 +125,13 @@ class MonthBarView : RelativeLayout {
         }
 
         setBackgrounds()
+
+        invalidate()
+
+        requestLayout()
     }
 
     private fun setOverBar(barSize: Int, showEstimated: Boolean) {
-        over_bar.layoutParams.width = barSize / 3
 
         //define os cantos (top right e bottom right) sem arredondamento
         actualBarSolid.cornerRadii = floatArrayOf(8f, 8f, 0f, 0f, 0f, 0f, 8f, 8f)
@@ -148,26 +170,29 @@ class MonthBarView : RelativeLayout {
     private fun getOverBarDrawable() =
             ContextCompat.getDrawable(context, R.drawable.over_rounded_bar_fill_drawable) as LayerDrawable
 
-    private fun getBarSize(maxValue: Double, value: Double, parentWidth: Int) : Int{
-        var m = maxValue
-        var v = value
-        val vtxt = if (valueTxt.width == 0) {
-            valueTxt.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED)
-            valueTxt.measuredWidth
+    private fun getBarSize(maxValue: Double, value: Double, parentWidth: Int, relatedView: View) : Int{
+        var max = maxValue
+        var currentValue = value
+        val relatedViewWidth = if (relatedView.width == 0) {
+            relatedView.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED)
+            relatedView.measuredWidth
         } else {
-            valueTxt.width
+            relatedView.width
         }
 
-        valueTxt.minWidth = vtxt
-        val maxWidth: Int = (parentWidth - vtxt)
-        var w = maxWidth
+        relatedView.minimumWidth = relatedViewWidth
+        var width: Int = (parentWidth - relatedViewWidth)
 
-        if (m < 0) m *= -1
-        if (v < 0) v *= -1
+        if (max < 0) max *= -1
+        if (currentValue < 0) currentValue *= -1
 
-        if (m > 0.0 && v > 0.0) w = (v / m * w).toInt()
+        if (max > 0.0 && currentValue > 0.0) width = (currentValue / max * width).toInt()
 
-        return w
+        return width
+    }
+
+    fun getWidthForValue(value: Double, maxValue: Double, width: Int): Int {
+        return ((value * width) / maxValue).toInt()
     }
 
     private fun setBackgroundOnBar(fill: Boolean) {
