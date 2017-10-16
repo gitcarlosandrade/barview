@@ -6,6 +6,7 @@ import android.graphics.drawable.LayerDrawable
 import android.os.Build
 import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
+import android.util.TypedValue
 import android.view.View
 import android.widget.RelativeLayout
 import kotlinx.android.synthetic.main.month_item_bar.view.*
@@ -180,8 +181,7 @@ class MonthBarView : RelativeLayout {
             relatedView.width
         }
 
-        relatedView.minimumWidth = relatedViewWidth
-        var width: Int = (parentWidth - relatedViewWidth)
+        var width: Int = (parentWidth - relatedViewWidth - Math.ceil(6f.dpToPx(context).toDouble()).toInt())
 
         if (max < 0) max *= -1
         if (currentValue < 0) currentValue *= -1
@@ -189,6 +189,11 @@ class MonthBarView : RelativeLayout {
         if (max > 0.0 && currentValue > 0.0) width = (currentValue / max * width).toInt()
 
         return width
+    }
+
+    fun Float.dpToPx(context: Context): Float {
+        val displayMetrics = context.resources.displayMetrics
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, this, displayMetrics)
     }
 
     fun getWidthForValue(value: Double, maxValue: Double, width: Int): Int {
