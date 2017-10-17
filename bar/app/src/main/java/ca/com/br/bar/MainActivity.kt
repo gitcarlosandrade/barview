@@ -22,7 +22,8 @@ class MainActivity : AppCompatActivity() {
         val o = over.text.toString().toDouble()
         val s = show_estimated.isChecked
         val c = this.window.decorView.findViewById<View>(android.R.id.content).rootView
-        bar.bind(value = v, estimatedValue = e, over = o, maxValue = m, parentWidth = c.width, showEstimated = s)
+        val label = Math.max(v + o, e)
+        bar.bind(value = v, estimatedValue = e, overValue = o, maxValue = m, parentWidth = c.width, showEstimated = s, label = label.toString())
         bar.invalidate()
         bar.requestLayout()
     }

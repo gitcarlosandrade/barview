@@ -2,7 +2,7 @@
 <layer-list
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:id="@+id/rect_stroke">
+    <item android:id="@+id/strokeRect">
         <shape android:shape="rectangle">
             <corners
                 android:bottomLeftRadius="8dp"
@@ -15,7 +15,7 @@
         </shape>
     </item>
 
-    <item android:id="@+id/rect_solid">
+    <item android:id="@+id/solidRect">
 
             <shape android:shape="rectangle">
 
