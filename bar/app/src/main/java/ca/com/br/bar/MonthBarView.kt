@@ -71,9 +71,9 @@ class MonthBarView : RelativeLayout {
         } else {
             Math.abs(value) + Math.abs(over)
         }
+        valueTxt.text = currentBarValue.toString()
 
         val barSize = getBarSize(maxValue, currentBarValue, parentWidth, valueTxt)
-        valueTxt.text = currentBarValue.toString()
 
         //configura contorno (valor estimado)
         if (showEstimated) {
@@ -172,8 +172,9 @@ class MonthBarView : RelativeLayout {
             ContextCompat.getDrawable(context, R.drawable.over_rounded_bar_fill_drawable) as LayerDrawable
 
     private fun getBarSize(maxValue: Double, value: Double, parentWidth: Int, relatedView: View) : Int{
-        var max = maxValue
-        var currentValue = value
+        val max = Math.abs(maxValue)
+        val currentValue = Math.abs(value)
+
         val relatedViewWidth = if (relatedView.width == 0) {
             relatedView.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED)
             relatedView.measuredWidth
@@ -183,10 +184,7 @@ class MonthBarView : RelativeLayout {
 
         var width: Int = (parentWidth - relatedViewWidth - Math.ceil(6f.dpToPx(context).toDouble()).toInt())
 
-        if (max < 0) max *= -1
-        if (currentValue < 0) currentValue *= -1
-
-        if (max > 0.0 && currentValue > 0.0) width = (currentValue / max * width).toInt()
+        if (max > 0.0 && currentValue > 0.0) width = ((currentValue * width) / max).toInt()
 
         return width
     }
@@ -196,7 +194,7 @@ class MonthBarView : RelativeLayout {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, this, displayMetrics)
     }
 
-    fun getWidthForValue(value: Double, maxValue: Double, width: Int): Int {
+    private fun getWidthForValue(value: Double, maxValue: Double, width: Int): Int {
         return ((value * width) / maxValue).toInt()
     }
 

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
@@ -36,11 +37,11 @@
         android:maxLines="1"
         android:textSize="14sp"
         android:textColor="@color/positive_green"
-        android:text="R$ 9.231"
         android:layout_marginLeft="6dp"
         android:layout_marginStart="6dp"
         android:layout_toRightOf="@id/estimated_bar"
         android:layout_toEndOf="@id/estimated_bar"
+        tools:text="R$ 9.231"
         />
 
 </RelativeLayout>
