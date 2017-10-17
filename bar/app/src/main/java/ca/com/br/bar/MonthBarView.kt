@@ -23,26 +23,29 @@ class MonthBarView : RelativeLayout {
 
     private var barColor: Int = 0
     private var overBarColor: Int = 0
-    private var estimatedBarLayer: LayerDrawable
-    private var actualBarLayer: LayerDrawable
-    private var overBarLayer: LayerDrawable
-    private var estimatedBar: GradientDrawable
-    private var actualBarStroke: GradientDrawable
-    private var actualBarSolid: GradientDrawable
-    private var overBarStroke: GradientDrawable
-    private var overBarSolid: GradientDrawable
+    private var estimatedBarLayer: LayerDrawable? = null
+    private var actualBarLayer: LayerDrawable? = null
+    private var overBarLayer: LayerDrawable? = null
+    private var estimatedBar: GradientDrawable? = null
+    private var actualBarStroke: GradientDrawable? = null
+    private var actualBarSolid: GradientDrawable? = null
+    private var overBarStroke: GradientDrawable? = null
+    private var overBarSolid: GradientDrawable? = null
 
     init {
         View.inflate(context, R.layout.month_item_bar, this)
+    }
+
+    private fun initDrawables() {
         estimatedBarLayer = getEstimatedBarDrawable()
         actualBarLayer = getActualBarDrawable()
         overBarLayer = getOverBarDrawable()
 
-        estimatedBar = estimatedBarLayer.findDrawableByLayerId(R.id.stroke) as GradientDrawable
-        actualBarStroke = actualBarLayer.findDrawableByLayerId(R.id.rect_stroke) as GradientDrawable
-        actualBarSolid = actualBarLayer.findDrawableByLayerId(R.id.rect_solid) as GradientDrawable
-        overBarStroke = overBarLayer.findDrawableByLayerId(R.id.rect_stroke) as GradientDrawable
-        overBarSolid = overBarLayer.findDrawableByLayerId(R.id.rect_solid) as GradientDrawable
+        estimatedBar = estimatedBarLayer?.findDrawableByLayerId(R.id.stroke) as GradientDrawable
+        actualBarStroke = actualBarLayer?.findDrawableByLayerId(R.id.rect_stroke) as GradientDrawable
+        actualBarSolid = actualBarLayer?.findDrawableByLayerId(R.id.rect_solid) as GradientDrawable
+        overBarStroke = overBarLayer?.findDrawableByLayerId(R.id.rect_stroke) as GradientDrawable
+        overBarSolid = overBarLayer?.findDrawableByLayerId(R.id.rect_solid) as GradientDrawable
     }
 
     private fun readAttributes(attrs: AttributeSet?) {
@@ -55,7 +58,7 @@ class MonthBarView : RelativeLayout {
                 R.styleable.MonthBarView_over_bar_color,
                 ContextCompat.getColor(context, R.color.black_divider))
 
-        valueTxt.setTextColor(barColor)
+        monthItemBarLabel.setTextColor(barColor)
         typedArray.recycle()
     }
 
@@ -66,27 +69,25 @@ class MonthBarView : RelativeLayout {
              parentWidth: Int,
              showEstimated: Boolean) {
 
+        initDrawables()
+
         val currentBarValue = if (showEstimated) {
             Math.max(Math.abs(estimatedValue), Math.abs(value) + Math.abs(over))
         } else {
             Math.abs(value) + Math.abs(over)
         }
-        valueTxt.text = currentBarValue.toString()
 
-        val barSize = getBarSize(maxValue, currentBarValue, parentWidth, valueTxt)
+        monthItemBarLabel.text = currentBarValue.toString()
 
-        //configura contorno (valor estimado)
+        val barSize = getBarSize(maxValue, currentBarValue, parentWidth, monthItemBarLabel)
+
         if (showEstimated) {
-            estimatedBar.setStroke(1, barColor)
-            //define o espaço  para colocar as barras
-            //esse espaço é usado para mostrar o estimado também
-            estimated_bar.layoutParams.width = barSize
-            //define o tamanho da barra de gasto atual
-//            actual_bar.layoutParams.actualWidth = barSize / 2
+            estimatedBar?.setStroke(1.dpToPx(context), barColor)
+            monthItemBarEstimatedBar.layoutParams.width = barSize
         }
         else {
-            estimatedBar.setStroke(0, barColor)
-            estimated_bar.layoutParams.width = barSize
+            estimatedBar?.setStroke(0, barColor)
+            monthItemBarEstimatedBar.layoutParams.width = barSize
         }
 
         val actualWidth = getWidthForValue(
@@ -94,17 +95,17 @@ class MonthBarView : RelativeLayout {
                 maxValue = currentBarValue,
                 width = barSize
         )
-        actual_bar.layoutParams.width = actualWidth
+        monthItemBarActualBar.layoutParams.width = actualWidth
 
         //define as cores das barras
-        actualBarSolid.setColor(barColor)
-        overBarSolid.setColor(overBarColor)
+        actualBarSolid?.setColor(barColor)
+        overBarSolid?.setColor(overBarColor)
 
 
 
         if (over > 0.0) {
             //define o tamanho do excedido
-            over_bar.layoutParams.width = getWidthForValue(
+            monthItemBarOverBar.layoutParams.width = getWidthForValue(
                     value = over,
                     maxValue = currentBarValue,
                     width = barSize
@@ -115,61 +116,70 @@ class MonthBarView : RelativeLayout {
         } else {
 
             //some com a barra de excedido
-            over_bar.layoutParams.width = 0
+            monthItemBarOverBar.layoutParams.width = 0
 
             //define todos os cantos arredondados
-            actualBarSolid.cornerRadii = floatArrayOf(8f, 8f, 8f, 8f, 8f, 8f, 8f, 8f)
-            actualBarStroke.cornerRadii = floatArrayOf(8f, 8f, 8f, 8f, 8f, 8f, 8f, 8f)
+            actualBarSolid?.cornerRadii = floatArrayOf(8f, 8f, 8f, 8f, 8f, 8f, 8f, 8f)
+            actualBarStroke?.cornerRadii = floatArrayOf(8f, 8f, 8f, 8f, 8f, 8f, 8f, 8f)
 
             //define o contorno
-            actualBarStroke.setStroke(1, barColor)
+            actualBarStroke?.setStroke(1.dpToPx(context), barColor)
         }
 
         setBackgrounds()
 
-        invalidate()
+        redraw()
+    }
 
+    private fun redraw() {
+        monthItemBarEstimatedBar.invalidate()
+        monthItemBarEstimatedBar.requestLayout()
+        monthItemBarActualBar.invalidate()
+        monthItemBarActualBar.requestLayout()
+        monthItemBarOverBar.invalidate()
+        monthItemBarOverBar.requestLayout()
+        invalidate()
         requestLayout()
     }
 
     private fun setOverBar(barSize: Int, showEstimated: Boolean) {
 
         //define os cantos (top right e bottom right) sem arredondamento
-        actualBarSolid.cornerRadii = floatArrayOf(8f, 8f, 0f, 0f, 0f, 0f, 8f, 8f)
-        actualBarStroke.cornerRadii = floatArrayOf(8f, 8f, 0f, 0f, 0f, 0f, 8f, 8f)
+        actualBarSolid?.cornerRadii = floatArrayOf(8f, 8f, 0f, 0f, 0f, 0f, 8f, 8f)
+        actualBarStroke?.cornerRadii = floatArrayOf(8f, 8f, 0f, 0f, 0f, 0f, 8f, 8f)
 
         //tira a linha
-        actualBarStroke.setStroke(0, barColor)
+        actualBarStroke?.setStroke(0, barColor)
 
         //muda a cor do contorno da barra de estimado
-        if (showEstimated) estimatedBar.setStroke(1, overBarColor)
+        if (showEstimated) estimatedBar?.setStroke(1.dpToPx(context), overBarColor)
     }
 
     private fun setBackgrounds() {
-        estimatedBarLayer.setDrawableByLayerId(R.id.stroke, estimatedBar)
-        actualBarLayer.setDrawableByLayerId(R.id.stroke, actualBarStroke)
-        actualBarLayer.setDrawableByLayerId(R.id.rect_solid, actualBarSolid)
-        overBarLayer.setDrawableByLayerId(R.id.stroke, overBarStroke)
-        overBarLayer.setDrawableByLayerId(R.id.rect_solid, overBarSolid)
+        estimatedBarLayer?.setDrawableByLayerId(R.id.stroke, estimatedBar)
+        actualBarLayer?.setDrawableByLayerId(R.id.stroke, actualBarStroke)
+        actualBarLayer?.setDrawableByLayerId(R.id.rect_solid, actualBarSolid)
+        overBarLayer?.setDrawableByLayerId(R.id.stroke, overBarStroke)
+        overBarLayer?.setDrawableByLayerId(R.id.rect_solid, overBarSolid)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            estimated_bar.background = estimatedBarLayer
-            actual_bar.background = actualBarLayer
-            over_bar.background = overBarLayer
+            monthItemBarEstimatedBar.background = estimatedBarLayer
+            monthItemBarActualBar.background = actualBarLayer
+            monthItemBarOverBar.background = overBarLayer
         } else {
-            estimated_bar.setBackgroundDrawable(estimatedBarLayer)
-            actual_bar.setBackgroundDrawable(actualBarLayer)
-            over_bar.setBackgroundDrawable(overBarLayer)
+            monthItemBarEstimatedBar.setBackgroundDrawable(estimatedBarLayer)
+            monthItemBarActualBar.setBackgroundDrawable(actualBarLayer)
+            monthItemBarOverBar.setBackgroundDrawable(overBarLayer)
         }
     }
 
     private fun getActualBarDrawable() =
-            ContextCompat.getDrawable(context, R.drawable.rounded_bar_fill_drawable) as LayerDrawable
+            ContextCompat.getDrawable(context, R.drawable.rounded_bar_fill_drawable).mutate() as LayerDrawable
 
     private fun getEstimatedBarDrawable() =
-            ContextCompat.getDrawable(context, R.drawable.rounded_bar_stroke_drawable) as LayerDrawable
+            ContextCompat.getDrawable(context, R.drawable.rounded_bar_stroke_drawable).mutate() as LayerDrawable
 
     private fun getOverBarDrawable() =
-            ContextCompat.getDrawable(context, R.drawable.over_rounded_bar_fill_drawable) as LayerDrawable
+            ContextCompat.getDrawable(context, R.drawable.over_rounded_bar_fill_drawable).mutate() as LayerDrawable
 
     private fun getBarSize(maxValue: Double, value: Double, parentWidth: Int, relatedView: View) : Int{
         val max = Math.abs(maxValue)
@@ -189,9 +199,14 @@ class MonthBarView : RelativeLayout {
         return width
     }
 
-    fun Float.dpToPx(context: Context): Float {
+    private fun Float.dpToPx(context: Context): Float {
         val displayMetrics = context.resources.displayMetrics
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, this, displayMetrics)
+    }
+
+    private fun Int.dpToPx(context: Context): Int {
+        val displayMetrics = context.resources.displayMetrics
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, this.toFloat(), displayMetrics).toInt()
     }
 
     private fun getWidthForValue(value: Double, maxValue: Double, width: Int): Int {

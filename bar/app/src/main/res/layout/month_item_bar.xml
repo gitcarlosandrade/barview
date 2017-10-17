@@ -8,7 +8,7 @@
     android:gravity="center_vertical">
 
     <LinearLayout
-        android:id="@+id/estimated_bar"
+        android:id="@+id/monthItemBarEstimatedBar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
@@ -16,13 +16,13 @@
         android:layout_alignParentStart="true">
 
         <View
-            android:id="@+id/actual_bar"
+            android:id="@+id/monthItemBarActualBar"
             android:layout_width="0dp"
             android:layout_height="6dp"
             />
 
         <View
-            android:id="@+id/over_bar"
+            android:id="@+id/monthItemBarOverBar"
             android:layout_width="0dp"
             android:layout_height="6dp"
             />
@@ -31,7 +31,7 @@
 
 
     <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/valueTxt"
+        android:id="@+id/monthItemBarLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:maxLines="1"
@@ -39,8 +39,8 @@
         android:textColor="@color/positive_green"
         android:layout_marginLeft="6dp"
         android:layout_marginStart="6dp"
-        android:layout_toRightOf="@id/estimated_bar"
-        android:layout_toEndOf="@id/estimated_bar"
+        android:layout_toRightOf="@id/monthItemBarEstimatedBar"
+        android:layout_toEndOf="@id/monthItemBarEstimatedBar"
         tools:text="R$ 9.231"
         />
 
