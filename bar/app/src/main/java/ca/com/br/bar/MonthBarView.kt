@@ -91,7 +91,7 @@ class MonthBarView : RelativeLayout {
 
         val actualWidth = getWidthForValue(
                 value = value,
-                maxValue = maxValue,
+                maxValue = currentBarValue,
                 width = barSize
         )
         actual_bar.layoutParams.width = actualWidth
@@ -106,7 +106,7 @@ class MonthBarView : RelativeLayout {
             //define o tamanho do excedido
             over_bar.layoutParams.width = getWidthForValue(
                     value = over,
-                    maxValue = maxValue,
+                    maxValue = currentBarValue,
                     width = barSize
             )
 
